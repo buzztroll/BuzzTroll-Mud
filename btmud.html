@@ -1,0 +1,89 @@
+<html>
+<header>
+<title>BuzzTroll Mud on TiVo</title>
+</header>
+
+<body>
+
+<h2>BuzzTroll Mud</h2>
+
+<p>
+BuzzTroll Mud is a Java Mud client. It requires Java 1.4.2+.
+</p>
+
+<ol>
+
+<li>
+To run BuzzTroll Mud make sure you have Java 1.4.2+ properly installed (Java executable is in the path).
+</li>
+
+<li>
+Download and unpack the BuzzTroll Mud [<a href="BuzzTrollMud-1.0-bin.tar.gz">tar.gz</a> | <a href="BuzzTrollMud-1.0-bin.zip">zip</a>] 
+</li>
+
+<li>
+Update the sample configuration file (<i>&lt;btmud&gt;/etc/sample.xml</i>) and copy it to the <i>$HOME/.btmudrc/</i> directory on Unix/Linux or <i>%USERPROFILE%\.btmudrc\</i> directory on Windows. Make sure to at least update the Mud server information such as the Mud hostname, the port number, the username, and the password (the <i>&lt;server&gt;</i> element). 
+</li>
+
+<li>
+Start the BuzzTroll Mud application by running:
+<pre>
+ &lt;btmud&gt;/bin/run
+</pre>
+</li>
+
+</ol>
+
+
+<h2>BuzzTroll Mud on TiVo</h2>
+
+<i>This is an experimental code.</i>
+
+<p>
+BuzzTroll Mud on TiVo provides read-only Mud access. It's written with <a href="http://tivohme.sourceforge.net/">TiVo Home Media Engine SDK APIs</a>.
+</p>
+
+<ol>
+
+<li>
+To run BuzzTroll Mud on TiVo first make sure that your TiVo DVR meets the requirements described on the <a href="http://tivohme.sourceforge.net/?page=quickstart">HME Quick Start</a> page.
+</li>
+
+<li>
+Download and install <a href="http://sourceforge.net/project/showfiles.php?group_id=124214">TiVo HME SDK 1.2</a>.
+</li>
+
+<li>
+Ensure the samples included in the TiVo HME SDK work on your TiVo DVR as expected.
+</li>
+
+<li>
+Download and unpack the BuzzTroll Mud [<a href="BuzzTrollMud-1.0-bin.tar.gz">tar.gz</a> | <a href="BuzzTrollMud-1.0-bin.zip">zip</a>] 
+</li>
+
+<li>
+Update the sample configuration file (<i>&lt;btmud&gt;/etc/sample.xml</i>). At least update the Mud server information such as the Mud hostname, the port number, the username, and the password (the <i>&lt;server&gt;</i> element).
+</li>
+
+<li>
+Set the <i>HME_HOME</i> environment variable to the installation directory of the TiVo HME SDK.
+</li>
+
+<li>
+Start the BuzzTroll Mud application by running:
+<pre>
+ &lt;btmud&gt;/bin/runTivo &lt;btmud&gt;/etc/sample.xml
+</pre>
+</li>
+
+<li>
+Select the <i>Mud</i> application listed under the <i>Music, Photos & More</i> menu in your TiVo DVR.
+</li>
+ 
+</ol>
+
+<hr>
+
+<h5>Please contact <a href="mailto:gawor@mcs.anl.gov,bresnaha@mcs.anl.gov">Jarek and John</a> if you have any questions, etc.</h5>
+</body>
+</html>

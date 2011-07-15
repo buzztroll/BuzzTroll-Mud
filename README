@@ -1,0 +1,113 @@
+============================================================================
+BuzzTrollMud
+============================================================================
+
+This java program is intended to be used as a MudClient.  It sends telnet
+strings in the exact format they are entered by the user.  The strings 
+received by the server are given a color based on there content and displayed
+as is to the screen.
+
+BuzzTrollMud has only been tested with java version "1.4.0"
+Other version of java may work but have never been tried.
+
+Use this all you want, just don't make money off of it and give credit where
+it is due.  Ummm and consider it GPL.
+
+Build requirements:
+  - Java 1.4.0+ (http://java.sun.com/j2se/)
+  - Apache Ant 1.5.1 (http://ant.apache.org/)
+
+-----------------------------------------------------------------------------
+To Build
+-----------------------------------------------------------------------------
+
+  1) Ensure Java is properly installed (the Java executable is in the path).
+     To test if Java is in the path and is of the right version type:
+
+     % java -version 
+
+  2) Ensure Ant is properly installed (the Ant executable is in the path).
+     To test if Ant is in the path and is of the right version type:
+   
+     % ant -version
+
+  3) To compile the code and create the ./BUILD/BuzzTrollMud.jar file run:   
+
+     % ant
+
+  4) To create the binary installation of the BuzzTrollMud run:
+
+    % ant dist -Ddist.dir=<install dir>
+
+     If -Ddist.dir is not specified an installation directory is 
+     created under ./BUILD/BuzzTrollMud-${version}/ directory.
+
+-----------------------------------------------------------------------------
+To Run
+-----------------------------------------------------------------------------
+
+From the binary installation directory run:
+
+  % ./bin/run.sh
+
+-----------------------------------------------------------------------------
+Configuration
+-----------------------------------------------------------------------------
+
+Configuration information will be stored in the directory $HOME/.btmudrc
+
+There is a smaple configuration file included with this distribution
+located at ./MCS.xml.  You need not understand this file to use BuzzTrollMud.
+The application has a configuration GUI to help create these for you.
+
+-----------------------------------------------------------------------------
+Using it
+-----------------------------------------------------------------------------
+
+Follow the instruction in build and run.
+
+The first time you start there will be no connections.  To add a connection
+click on File->Add.  This will bring up a configuration window.  You must 
+fill in all information on the "Host" tab, the rest are optional and can be 
+configured later.  Once you are finished filling in information click "Save".
+A Connection should now start.
+
+Several connections can be added to a single instance of BuzzTrollMud.  To add
+more simple go through the process described above.  As coonections are added
+new tabs will be added.  There will be at most 2 connections per tab.
+
+To reconfigure a connection simply right click on the connection window you
+wish to reconfigure.  From the menu that pops up select "Configure".
+
+There currently is no way to remove a connection built into the app.  To do 
+this goto the directroy ~/.btmudrc.  In that directory you will find a 
+xml file for every connection you added.  To remove a conneciton simply delete
+the appropriate file.
+
+
+------
+ISSUES
+------
+adding jabber support
+   add interceptor
+      catch send messages before they go out on the wire
+menus
+focus problem
+    when click on output window it takes the focus, 
+    focus should always goto input window
+remove a connection
+saving state of GUI
+    size of window
+    fonts on each connection
+    ordering of conections
+    default font
+
+
+------
+TODO
+-----
+
+o MudFrame take directory as an argument
+o remove dependency on jfontchooser
+o remove dependency on axis
+

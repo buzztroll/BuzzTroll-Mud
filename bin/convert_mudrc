@@ -1,0 +1,91 @@
+#! /usr/bin/perl
+
+use IO::File;
+
+$result = &read_file();
+
+&write_xml($result);
+
+sub write_xml
+{
+    my $values = shift;
+    my $array;
+
+    print <<EOF;
+<?xml version="1.0"?>
+<mud>
+    <names>
+	<toMe red="$values->{ME}[1]"
+		green="$values->{ME}[2]"
+		blue="$values->{ME}[3]"/>
+EOF
+    foreach(sort keys %{$values->{NAME}})
+    {
+	print <<EOF;
+        <character name="$_"
+	           red="$values->{NAME}{$_}[0]"
+	           green="$values->{NAME}{$_}[1]"
+	           blue="$values->{NAME}{$_}[2]"/>
+EOF
+    }
+    print <<EOF;
+    </names>
+    <server name="$values->{USER}[0]">
+	<connect hostname="$values->{HOSTNAME}[0]"
+		 port="$values->{PORT}[0]"/>
+	<auth username="$values->{USER}[0]"
+		 password="$values->{USER}[1]"/>
+    </server>
+    <action>
+	<color match="pokes you." position="2" red="255" green="0" blue="51"/>
+	<intensify match="You whisper to " position="0" value="-32"/>
+	<intensify match="(to" position="0" value="-32"/>
+	<intensify match="(from" position="0" value="-32"/>
+	<intensify match="to you]:" position="1" value="24"/>
+	<intensify match="whispers to you, " position="1" value="-27"/>
+    </action>
+</mud>
+EOF
+
+}
+
+sub read_file
+{
+    my $filename = shift;
+    my $attribute;
+    my @values;
+    my $result = {};
+    my $key;
+
+    while(<>)
+    {
+	chomp;
+
+	s/#.*//;
+	next if(/^\s*$/);
+
+	($attribute, @values) = split(/\s+/);
+	if(exists($result->{$attribute}))
+	{
+	    # if this attribute appears multiple times, convert it to a hash
+	    # with the first of @values as the key
+	    if(ref($result->{$attribute}) eq "ARRAY")
+	    {
+		$key = shift(@{$result->{$attribute}});
+		@oldvalue = @{$result->{$attribute}};
+		delete $result->{$attribute};
+		$result->{$attribute}{$key} = [@oldvalue];
+	    }
+
+	    $key = shift(@values);
+	    $result->{$attribute}{$key} = [@values];
+
+	    #push(@{$result->{$attribute}}, @values);
+	}
+	else
+	{
+	    $result->{$attribute} = [@values] ;
+	}
+    }
+    return $result;
+}

@@ -1,0 +1,200 @@
+<project name="Buzztroll Mud" default="jar" basedir=".">
+
+  <property environment="env"/>
+  <property file="build.properties"/>
+
+  <property name="env.HME_HOME"   value="."/>
+
+  <property name="project"        value="Buzztroll Mud"/>
+
+  <property name="build.dir"      value="BUILD"/>
+  <property name="src.dir"        value="src"/>
+  <property name="dst.dir"        value="${build.dir}/classes"/>
+
+  <property name="version"        value="1.0"/>
+  <property name="dist.dir"       
+            value="${build.dir}/BuzzTrollMud-${version}"/>
+
+  <property name="jar.filename"   value="BuzzTrollMud.jar"/>
+  <property name="jar.file"       value="${build.dir}/${jar.filename}"/>
+
+  <property name="jars" value = "${jar.file}"/>
+
+  <property name="exclude.dirs" value="" />
+
+  <property name="debug"       value="true" />
+  <property name="optimize"    value="false" />
+  <property name="deprecation" value="true" />
+
+  <!-- =================================================================== -->
+  <!-- Classpath                                                           -->
+  <!-- =================================================================== -->
+
+  <path id="classpath">
+    <fileset dir="lib">
+     <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${env.HME_HOME}">
+     <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <!-- =================================================================== -->
+  <!-- Functions                                                           -->
+  <!-- =================================================================== -->
+  
+  <target name="prepare">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dst.dir}"/>
+  </target>
+
+  <target name="setenv">
+    <available property="hme.present"
+        classname="com.tivo.hme.sdk.Application"
+        classpathref="classpath"/>
+
+    <echo message=""/>
+    <echo message="--- Property values ---" />
+    <echo message="debug=${debug}" />
+    <echo message="deprecation=${deprecation}" />
+    <echo message="optimize=${optimize}" />
+    <echo message="Tivo SDK=${hme.present}"/>
+  </target>
+
+  <target name="compile" depends="setenv">
+        <javac  srcdir="${src.dir}" 
+                destdir="${dst.dir}"
+                includes="org/**/*.java"
+                excludes="${exclude.dirs}"
+                classpathref="classpath"
+                debug="${debug}" 
+                optimize="${optimize}"
+                deprecation="${deprecation}">
+
+        <exclude name="**/tivo/**" unless="hme.present"/>
+        </javac>
+  </target>  
+
+  <target name="clean">
+        <delete dir="${dst.dir}"/>
+        <delete file="${jar.file}"/>
+  </target>
+
+  <target name="cleanAll" depends="clean">
+        <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="jar" depends="prepare,compile" >
+        <jar    jarfile="${jar.file}"
+                basedir="${dst.dir}"
+                includes="org/**/*.class"
+                manifest="src/mf"
+        />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Binary distribution targets                                         -->
+  <!-- =================================================================== -->
+
+  <target name="dist" depends="jar" >
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}/bin"/>
+        <mkdir dir="${dist.dir}/lib"/>
+        <mkdir dir="${dist.dir}/etc"/>
+
+        <copy todir="${dist.dir}/lib" >
+                <fileset dir="${build.dir}" includes="*.jar" />
+        </copy>
+
+        <copy todir="${dist.dir}/lib" >
+                <fileset dir="lib" includes="*.jar *.LICENSE" />
+        </copy>
+
+        <copy todir="${dist.dir}/bin" >
+                <fileset dir="bin"/>
+        </copy>
+
+        <copy file="MCS.xml" tofile="${dist.dir}/etc/sample.xml" />
+
+        <chmod dir="${dist.dir}/bin" perm="ugo+rx" 
+               includes="**/*.sh"/>
+
+  </target>
+
+  <target name="distbinzip" depends="dist">
+        <zip zipfile="${build.dir}/BuzzTrollMud-${version}-bin.zip"
+             basedir="${build.dir}"
+             includes="BuzzTrollMud-${version}/**"
+             excludes="BuzzTrollMud-${version}/lib/cmu*.jar
+                       BuzzTrollMud-${version}/lib/freetts.jar
+                       BuzzTrollMud-${version}/lib/JFontChooser.jar" />
+  </target>
+
+  <target name="distbingzip" depends="dist">
+     <tar destfile="${build.dir}/BuzzTrollMud-${version}-bin.tar.gz" 
+          compression="gzip">
+      <tarfileset dir="${build.dir}" mode="755">
+       <include name="BuzzTrollMud-${version}/bin/*"/>
+       <exclude name="BuzzTrollMud-${version}/bin/*.bat"/>
+      </tarfileset>
+    <tarfileset dir="${build.dir}">
+       <include name="BuzzTrollMud-${version}/bin/*.bat"/>
+    </tarfileset>
+    <tarfileset dir="${build.dir}">
+      <include name="BuzzTrollMud-${version}/**"/>
+      <exclude name="BuzzTrollMud-${version}/bin/**"/>
+      <!-- becuase licensing is not clear -->
+      <exclude name="BuzzTrollMud-${version}/lib/cmu*.jar"/>
+      <exclude name="BuzzTrollMud-${version}/lib/freetts.jar"/>
+      <exclude name="BuzzTrollMud-${version}/lib/JFontChooser.jar"/>
+    </tarfileset>
+   </tar>
+  </target>
+
+  <target name="distbin" depends="distbinzip, distbingzip"/>
+
+  <!-- =================================================================== -->
+  <!-- Tivo Targets                                                        -->
+  <!-- =================================================================== -->
+
+  <target name="tivoSimulatorRun">
+    <java classname="com.tivo.hme.sim.Simulator" 
+          classpathref="classpath"
+          fork="yes">
+        <classpath>
+          <fileset dir="lib">
+            <include name="*.jar"/>
+         </fileset>
+         <fileset dir="${env.HME_HOME}">
+            <include name="*.jar"/>
+         </fileset>
+         <fileset dir="${build.dir}">
+            <include name="*.jar"/>
+         </fileset>
+        </classpath>
+        <arg value = "org.buzztroll.mud.tivo.Mud"/>
+        <arg value = "MCS.xml"/>
+    </java>
+  </target>
+
+  <target name="tivoRun">
+    <java classname="com.tivo.hme.sdk.Factory" 
+          classpathref="classpath"
+          fork="yes">
+        <classpath>
+          <fileset dir="lib">
+            <include name="*.jar"/>
+         </fileset>
+         <fileset dir="${env.HME_HOME}">
+            <include name="*.jar"/>
+         </fileset>
+         <fileset dir="${build.dir}">
+            <include name="*.jar"/>
+         </fileset>
+        </classpath>
+        <arg value = "org.buzztroll.mud.tivo.Mud"/>
+        <arg value = "MCS.xml"/>
+     </java>
+  </target>
+
+</project>
